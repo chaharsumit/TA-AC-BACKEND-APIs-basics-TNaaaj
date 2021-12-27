@@ -5,8 +5,14 @@ var router = express.Router();
 //get single comment
 router.get('/:id', (req, res, next) => {
   let id = req.params.id; //comment id 
+  Comment.findById(id, (err, comment) => {
+    if(err){
+      res.status(500);
+      return next(err);
+    }
+    res.status(200).json({ comment });
+  })
   //find comment by id db.findbyid(id)
-  res.status(200).json('single comment');
 });
 
 //create a comment
@@ -17,22 +23,40 @@ router.get('/new', (req, res, next) => {
 //edit a comment
 router.get('/:id/edit', (req, res, next) => {
   let id = req.params.id; // comment id
+  Comment.findById(id, (err, comment) => {
+    if(err){
+      res.status(500);
+      return next(err);
+    }
+    res.status(200).json({ comment });
+  })
   //find comment and update db.findbyidandupdate(id);
-  res.status(200).json('edit comment page with existing comment data');
 })
 
 router.post('/:id', (req, res, next) => {
   let id = req.params.id; // comment id
+  Comment.findByIdAndUpdate(id, req.body, (err, comment) => {
+    if(err){
+      res.status(500);
+      return next(err);
+    }
+    res.status(200).json({ comment });
+  })
   //find comment and update db.findbyidandupdate(id);
-  res.status(200).json('edited comment data');
 })
 
 //delete
 
 router.get('/:id/delete', (req, res, next) => {
   let id = req.params.id;
+  Comment.findByIdAndDelete(id, (err, comment) => {
+    if(err){
+      res.status(500);
+      return next(err);
+    }
+    res.status(200).json({ comment });
+  })
   //find comment by id and delete
-  res.status(200).json('back to books redirect');
 });
 
 module.exports = router;
