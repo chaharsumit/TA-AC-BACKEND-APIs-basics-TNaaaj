@@ -68,4 +68,17 @@ router.get('/:id/delete', (req, res, next) => {
   })
 })
 
+//all states for country in ascendeing order
+
+router.get('/:id/statesAscending', (req, res, next) => {
+  let id = req.params.id;
+  Country.findById(id).populate({path: "State", select: population, option: {sort: {population: 1}}}).exec((err, country) => {
+    if(err){
+      res.status(500);
+      return next(err);
+    }
+    res.status(200).json({ country });
+  })
+})
+
 module.exports = router;
