@@ -72,7 +72,62 @@ router.get('/:id/delete', (req, res, next) => {
 
 router.get('/:id/statesAscending', (req, res, next) => {
   let id = req.params.id;
-  Country.findById(id).populate({path: "State", select: population, option: {sort: {population: 1}}}).exec((err, country) => {
+  Country.findById(id).populate("state", "population").sort({ "state.population": 1 }).exec((err, country) => {
+    if(err){
+      res.status(500);
+      return next(err);
+    }
+    res.status(200).json({ country });
+  })
+})
+
+router.get('/:id/neighbours', (req, res, next) => {
+  let id = req.params.id;
+  Country.findById(id).populate("neighbouring_countries", "name").exec((err, country) => {
+    if(err){
+      res.status(500);
+      return next(err);
+    }
+    res.status(200).json({ country });
+  })
+})
+
+router.get('/:id/religions', (req, res, next) => {
+  let id = req.params.id;
+  Country.findById(id).distinct("ethnicity").exec((err, result) => {
+    if(err){
+      res.status(500);
+      return next(err);
+    }
+    res.status(200).json({ result });
+  })
+})
+
+router.get('/:id/religions/religion_name', (req, res, next) => {
+  let id = req.params.id;
+  Country.find({$in: {ethnicity: religion_name}}, (err, countries) => {
+    if(err){
+      res.status(500);
+      return next(err);
+    }
+    res.status(200).json({ countries });
+  })
+})
+
+router.get('/:id/continents/continent_name', (req, res, next) => {
+  let id = req.params.id;
+  Country.find({$in: {continent: continent_name}}, (err, countries) => {
+    if(err){
+      res.status(500);
+      return next(err);
+    }
+    res.status(200).json({ countries });
+  })
+})
+
+router.get('/population/:number', (req, res, next) => {
+  let population = req.params.number;
+  Country.findOne({ population }, (err, country) => {
     if(err){
       res.status(500);
       return next(err);
